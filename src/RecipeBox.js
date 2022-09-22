@@ -25,13 +25,13 @@ const RecipeBox = ({title, image, calories, ingredients, link}) => {
                                 <li>{ingredient.text}</li>
                             ))}
                             </ol>
-
-                            {/*<br></br>*/}
-                           <h6>More Info: {link}</h6>
                             <h6>Calories: {calories}</h6>
                         </Modal.Body>
-                        <Modal.Footer>
-                            <button variant="secondary" onClick={handleClose}>Close</button>
+                        <Modal.Footer className="d-flex justify-content-between">
+                            <a href={link}>
+                                <Button className="recipe-btn" variant="secondary">Full Recipe</Button>
+                            </a>
+                            <Button className="recipe-btn" variant="secondary" onClick={handleClose}>Close</Button>
                         </Modal.Footer>
                     </Modal>
                 </div>
