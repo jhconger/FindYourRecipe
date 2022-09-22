@@ -1,7 +1,7 @@
 import {Modal, show, Button} from 'react-bootstrap';
 import React, {useState} from 'react';
 
-const RecipeBox = ({title, image, calories, ingredients}) => {
+const RecipeBox = ({title, image, calories, ingredients, link}) => {
 
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
@@ -27,8 +27,7 @@ const RecipeBox = ({title, image, calories, ingredients}) => {
                             </ol>
 
                             {/*<br></br>*/}
-                            <h6>Overview:</h6>
-                            {/*<p>{overview}</p>*/}
+                           <h6>More Info: {link}</h6>
                             <h6>Calories: {calories}</h6>
                         </Modal.Body>
                         <Modal.Footer>
