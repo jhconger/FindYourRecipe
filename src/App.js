@@ -7,33 +7,7 @@ import RecipeBox from './RecipeBox';
 import React, {useEffect, useState} from 'react';
 import ReactLoading from "react-loading";
 import LoadingScreen from "./LoadingScreen";
-//  function Loading() {
-//     return (
-//         <div>
-//             <h2>Loading in ReactJs - GeeksforGeeks</h2>
-//             <ReactLoading type="balls" color="#0000FF"
-//                           height={100} width={50} />
-//             <ReactLoading type="bars" color="#0000FF"
-//                           height={100} width={50} />
-//             <ReactLoading type="bubbles" color="#0000FF"
-//                           height={100} width={50} />
-//             <ReactLoading type="cubes" color="#0000FF"
-//                           height={100} width={50} />
-//             <ReactLoading type="cylon" color="#0000FF"
-//                           height={100} width={50} />
-//             <ReactLoading type="spin" color="#0000FF"
-//                           height={100} width={50} />
-//             <ReactLoading type="spokes" color="#0000FF"
-//                           height={100} width={50} />
-//             <ReactLoading
-//                 type="spinningBubbles"
-//                 color="#0000FF"
-//                 height={100}
-//                 width={50}
-//             />
-//         </div>
-//     );
-// }
+
 const AppIcon = styled.img`
 display: flex;
 flex-direction: row;
@@ -42,11 +16,6 @@ height: 75px;
 width: 75px;
 `;
 
-// $(window).load(function () {
-//     setTimeout(function () {
-//         $('.preloader').fadeOut('slow');
-//     }, 3000);
-// });
 const App =()=> {
 
     const APP_ID = "2d320d45";
@@ -82,7 +51,6 @@ const App =()=> {
     }, [])
     return (
         <>
-            {/*{loading === false ? (*/}
             <Navbar bg="black" expand="lg" variant="dark">
                 <Container fluid>
                     <AppIcon src='/RecipeLogo.svg'/>
@@ -102,6 +70,8 @@ const App =()=> {
 
                 </Container>
             </Navbar>
+            {recipes.length > 0 ?(
+                <section className="hero">
             <div className= "container">
                 <div className="grid">
                     {recipes.map(recipe =>(
@@ -115,7 +85,12 @@ const App =()=> {
                         />
                     ))}
                 </div>
+
             </div>
+                </section>
+            ):(
+                    <h2>Sorry !! No Recipes Found</h2>
+                )}
         </>
   );
 }

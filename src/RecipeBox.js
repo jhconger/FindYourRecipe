@@ -1,7 +1,7 @@
 import {Modal, show, Button} from 'react-bootstrap';
 import React, {useState} from 'react';
 
-const RecipeBox = ({title, image, calories, ingredients, link}) => {
+const RecipeBox = ({title, image, calories, ingredients, link, next}) => {
 
     const [show, setShow] = useState(false);
     const handleShow = () => setShow(true);
@@ -9,11 +9,11 @@ const RecipeBox = ({title, image, calories, ingredients, link}) => {
 
     return (
         <div className="card text-center bg-secondary mb-3">
-            <div className="card-body">
+            <div className="card-body d-flex flex-column">
                 <img className="card-img-top" src={image}/>
                 <h5>{title}</h5>
-                <div className="card-body d-flex flex-column h-100">
-                    <button type="button" className="btn btn-dark mb-1" onClick={handleShow}>View More</button>
+                <div className="card-body d-flex flex-column mt-auto h-80">
+                    <button type="button" className="btn btn-dark mt-auto" onClick={handleShow}>View More</button>
                     <Modal show={show} onHide={handleClose}>
                         <Modal.Header closeButton>
                             <Modal.Title></Modal.Title>
