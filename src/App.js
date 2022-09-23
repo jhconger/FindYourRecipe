@@ -21,24 +21,52 @@ const App =()=> {
     const APP_ID = "2d320d45";
     const APP_KEY = "07015b8fb7809a5ee4afdbe546b5d4b7";
     const [recipes, setRecipes] = useState ([]);
+    const [next, setNext] = useState ([]);
+    const [nextRecipes, setNextRecipes] = useState ([]);
     const [search,setSearch] = useState('');
     const [query, setQuery] = useState("chicken")
+    const [pagination, setPagination] = useState(0);
 
     useEffect(() => {
         getRecipes()
-    }, [query]);
+    }, [query, next]);
+
+    useEffect(() => {
+        getNext()
+    }, []);
+
+    useEffect(() => {
+        getNextRecipes()
+    }, []);
 
     const getRecipes = async () => {
-        const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
+        const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}&to=100`)
         const data = await response.json();
         setRecipes(data.hits);
         console.log(data.hits);
     };
 
+    const getNext = async () => {
+        const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
+        const data = await response.json();
+        setNext(data._links.next.href);
+        console.log(next);
+    };
+    const getNextRecipes = async () => {
+        const response = await fetch(next)
+        const data = await response.json();
+        setNextRecipes(data.hits);
+        console.log(data.hits);
+    };
     const updateSearch = e =>{
         setSearch(e.target.value)
     };
-
+    const updateNext = e =>{
+        setNext(e.target.value)
+    };
+    const updateRecipes = e =>{
+        setRecipes(e.target.value)
+    };
     const getSearch = e => {
     e.preventDefault();
     setQuery(search)
@@ -49,6 +77,7 @@ const App =()=> {
     useEffect(() => {
         setTimeout(() => setLoading(false), 6000)
     }, [])
+
     return (
         <>
             <Navbar bg="black" expand="lg" variant="dark">
@@ -75,17 +104,24 @@ const App =()=> {
             <div className= "container">
                 <div className="grid">
                     {recipes.map(recipe =>(
-                        <RecipeBox
-                        key = {recipe.recipe.label}
+                        <RecipeBox pagination={pagination} setPagination={setPagination}
+                        // key = {recipe._links.self.href}
                         title ={recipe.recipe.label}
                         image ={recipe.recipe.image}
                         calories ={recipe.recipe.calories}
                         ingredients ={recipe.recipe.ingredients}
                         link ={recipe.recipe.url}
+                        ingredients={recipe.recipe.ingredients}
+                        source={recipe.recipe.source}
+                        healthLabels={recipe.recipe.healthLabels}
+                        servings={recipe.recipe.yield}
                         />
                     ))}
                 </div>
-
+                <div className="d-flex justify-content-between">
+                    {/*<Button className="prev-btn" variant="secondary" onClick={prevClick} type="submit" >Previous</Button>*/}
+                    <Button className="next-btn" variant="secondary" value={next} onClick={getNext} type="submit" >Next</Button>
+                </div>
             </div>
                 </section>
             ):(

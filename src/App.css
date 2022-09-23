@@ -15,7 +15,7 @@ body{
 .container{
   width: 100%;
   padding: 15px;
-  background-color: #e34500;
+  /*background-color: #e34500;*/
 }
 
 .grid{
