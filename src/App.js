@@ -120,7 +120,7 @@ const App =()=> {
                 </div>
                 <div className="d-flex justify-content-between">
                     {/*<Button className="prev-btn" variant="secondary" onClick={prevClick} type="submit" >Previous</Button>*/}
-                    <Button className="next-btn" variant="secondary" value={next} onClick={getNext} type="submit" >Next</Button>
+                    <Button className="next-btn" variant="secondary" value={next} onClick={updateNext} type="submit" >Next</Button>
                 </div>
             </div>
                 </section>
