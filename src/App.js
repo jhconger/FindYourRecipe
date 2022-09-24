@@ -25,11 +25,10 @@ const App =()=> {
     const [nextRecipes, setNextRecipes] = useState ([]);
     const [search,setSearch] = useState('');
     const [query, setQuery] = useState("chicken")
-    const [pagination, setPagination] = useState(0);
 
     useEffect(() => {
         getRecipes()
-    }, [query, next]);
+    }, [query]);
 
     useEffect(() => {
         getNext()
@@ -40,23 +39,29 @@ const App =()=> {
     }, []);
 
     const getRecipes = async () => {
-        const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}&to=100`)
+        const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
         const data = await response.json();
         setRecipes(data.hits);
-        console.log(data.hits);
+      getNext();
+
     };
 
     const getNext = async () => {
         const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
         const data = await response.json();
         setNext(data._links.next.href);
-        console.log(next);
+        console.log(data._links.next.href);
+        getNextRecipes();
     };
+
     const getNextRecipes = async () => {
         const response = await fetch(next)
         const data = await response.json();
+        console.log(data)
         setNextRecipes(data.hits);
-        console.log(data.hits);
+        console.log(nextRecipes);
+        // setRecipes(nextRecipes)
+
     };
     const updateSearch = e =>{
         setSearch(e.target.value)
@@ -65,7 +70,7 @@ const App =()=> {
         setNext(e.target.value)
     };
     const updateRecipes = e =>{
-        setRecipes(e.target.value)
+        setRecipes(nextRecipes)
     };
     const getSearch = e => {
     e.preventDefault();
@@ -104,8 +109,8 @@ const App =()=> {
             <div className= "container">
                 <div className="grid">
                     {recipes.map(recipe =>(
-                        <RecipeBox pagination={pagination} setPagination={setPagination}
-                        // key = {recipe._links.self.href}
+                        <RecipeBox
+                        key = {recipe._links.self.href}
                         title ={recipe.recipe.label}
                         image ={recipe.recipe.image}
                         calories ={recipe.recipe.calories}
@@ -120,10 +125,13 @@ const App =()=> {
                 </div>
                 <div className="d-flex justify-content-between">
                     {/*<Button className="prev-btn" variant="secondary" onClick={prevClick} type="submit" >Previous</Button>*/}
-                    <Button className="next-btn" variant="secondary" value={next} onClick={updateNext} type="submit" >Next</Button>
+                    <Button className="next-btn" variant="secondary"  onClick={updateRecipes} type="submit">Next</Button>
                 </div>
+
             </div>
+
                 </section>
+
             ):(
                     <h2>Sorry !! No Recipes Found</h2>
                 )}
