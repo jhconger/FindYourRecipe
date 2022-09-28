@@ -28,7 +28,7 @@ const App =()=> {
 
     useEffect(() => {
         getRecipes()
-    }, [query]);
+    }, [query,next]);
 
     useEffect(() => {
         getNext()
@@ -41,44 +41,46 @@ const App =()=> {
     const getRecipes = async () => {
         const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
         const data = await response.json();
+        setNext(data._links.next.href)
         setRecipes(data.hits);
-        getNext();
-        setNext(data._links.next.href);
+        console.log(next);
+        getNextRecipes();
     };
-
     const getNext = async () => {
-        const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
+        const response = await fetch(response)
+        console.log(response)
         const data = await response.json();
-        // setNext(data._links.next.href);
-        // console.log(data._links.next.href);
-        // getNextRecipes();
+        console.log(data.hits)
+        setNext(data._links.next.href)
+        setNextRecipes(data.hits);
     };
-
     const getNextRecipes = async () => {
         const response = await fetch(next)
+        console.log(response)
         const data = await response.json();
-        console.log(data)
+        console.log(data.hits)
         setNextRecipes(data.hits);
-        console.log(nextRecipes);
-        // setRecipes(nextRecipes)
-
     };
+
     const updateSearch = e =>{
         setSearch(e.target.value)
     };
+
     const updateNext = e =>{
         setNext(e.target.value)
     };
+
     const updateRecipes = e =>{
         setRecipes(nextRecipes)
     };
+
     const getSearch = e => {
     e.preventDefault();
     setQuery(search)
         setSearch('');
     };
-    const [loading, setLoading] = useState(true)
 
+    const [loading, setLoading] = useState(true)
     useEffect(() => {
         setTimeout(() => setLoading(false), 6000)
     }, [])
@@ -110,7 +112,7 @@ const App =()=> {
                 <div className="grid">
                     {recipes.map(recipe =>(
                         <RecipeBox
-                        key = {recipe._links.self.href}
+                        key = {recipe._links.self}
                         title ={recipe.recipe.label}
                         image ={recipe.recipe.image}
                         calories ={recipe.recipe.calories}
