@@ -12,6 +12,19 @@ body{
   background-size: cover;
 }
 
+/*.card{*/
+/*  border: none;*/
+/*  outline: none;*/
+/*  !*background-color: #b74c0a !important;*!*/
+/*}*/
+
+ .card-body {
+  outline: none;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  /*background-color: #b74c0a !important;*/
+}
 .container{
   width: 100%;
   padding: 15px;
@@ -41,6 +54,7 @@ body{
   align-items: center;
   justify-content: center;
 }
+
 .loading {
   display: flex;
   flex-direction: row;
@@ -53,7 +67,7 @@ body{
   font-weight: normal;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: #22ad7c;
+  color: #12e0e0 !important;
   animation-name: bounce;
   animation-duration: 3.5s;
   animation-iteration-count: infinite;
@@ -129,8 +143,12 @@ body{
 }
 
 .search-btn {
+  background-color: #12e0e0 !important;
   padding: 5px!important;
   margin: 0 !important;
+  outline: none;
+  border: none;
+  color: black !important;
 }
 
 h5 {
@@ -164,4 +182,26 @@ h5 {
   display: grid;
   align-items: center;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.next-btn {
+  background-color: #12e0e0 !important;
+  padding: 5px!important;
+  margin: 0 !important;
+  outline: none;
+  border: none;
+  color: black !important;
+  display: flex;
+  justify-content: right;
+}
+
+.prev-btn {
+  background-color: #12e0e0 !important;
+  padding: 5px!important;
+  margin: 0 !important;
+  outline: none;
+  border: none;
+  color: black !important;
+  display: flex;
+  justify-content: right;
 }

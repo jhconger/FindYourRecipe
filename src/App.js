@@ -46,6 +46,7 @@ const App =()=> {
         console.log(next);
         getNextRecipes();
     };
+
     const getNext = async () => {
         const response = await fetch(response)
         console.log(response)
@@ -54,6 +55,7 @@ const App =()=> {
         setNext(data._links.next.href)
         setNextRecipes(data.hits);
     };
+
     const getNextRecipes = async () => {
         const response = await fetch(next)
         console.log(response)
@@ -126,7 +128,7 @@ const App =()=> {
                     ))}
                 </div>
                 <div className="d-flex justify-content-between">
-                    {/*<Button className="prev-btn" variant="secondary" onClick={prevClick} type="submit" >Previous</Button>*/}
+                    <Button className="prev-btn" variant="secondary"  onClick={getRecipes}type="submit" >Previous</Button>
                     <Button className="next-btn" variant="secondary"  onClick={updateRecipes} type="submit">Next</Button>
                 </div>
 
