@@ -28,7 +28,7 @@ const App =()=> {
 
     useEffect(() => {
         getRecipes()
-    }, [query,next]);
+    }, [query, next]);
 
     useEffect(() => {
         getNext()
@@ -45,47 +45,48 @@ const App =()=> {
         setRecipes(data.hits);
         console.log(next);
         getNextRecipes();
+        updateNext();
     };
 
     const getNext = async () => {
         const response = await fetch(response)
-        console.log(response)
+        console.log(response);
         const data = await response.json();
-        console.log(data.hits)
-        setNext(data._links.next.href)
+        console.log(data.hits);
+        setNext(data._links.next.href);
         setNextRecipes(data.hits);
     };
 
     const getNextRecipes = async () => {
         const response = await fetch(next)
-        console.log(response)
+        console.log(response);
         const data = await response.json();
-        console.log(data.hits)
+        console.log(data.hits);
         setNextRecipes(data.hits);
     };
 
     const updateSearch = e =>{
-        setSearch(e.target.value)
+        setSearch(e.target.value);
     };
 
     const updateNext = e =>{
-        setNext(e.target.value)
+        setNext(e.target.value);
     };
 
     const updateRecipes = e =>{
-        setRecipes(nextRecipes)
+        setRecipes(nextRecipes);
     };
 
     const getSearch = e => {
     e.preventDefault();
-    setQuery(search)
+    setQuery(search);
         setSearch('');
     };
 
     const [loading, setLoading] = useState(true)
     useEffect(() => {
         setTimeout(() => setLoading(false), 6000)
-    }, [])
+    }, []);
 
     return (
         <>
