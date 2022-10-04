@@ -25,36 +25,41 @@ const App =()=> {
     const [nextRecipes, setNextRecipes] = useState ([]);
     const [search,setSearch] = useState('');
     const [query, setQuery] = useState("chicken")
-
+    const [url,setUrl] = useState(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
     useEffect(() => {
         getRecipes()
-    }, [query, next]);
+    }, [query]);
 
     useEffect(() => {
         getNext()
     }, []);
 
-    useEffect(() => {
-        getNextRecipes()
-    }, []);
+    // useEffect(() => {
+    //     getNextRecipes()
+    // }, []);
 
     const getRecipes = async () => {
-        const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
+        const response = await fetch(url)
         const data = await response.json();
-        setNext(data._links.next.href)
+        console.log(data)
         setRecipes(data.hits);
-        console.log(next);
-        getNextRecipes();
-        updateNext();
+        setNext(data._links.next.href);
+
     };
 
     const getNext = async () => {
-        const response = await fetch(response)
+        // console.log(next);
+        const response = await fetch(next)
         console.log(response);
         const data = await response.json();
         console.log(data.hits);
+        setRecipes(data.hits);
+
+        // updateRecipes();
+        // console.log(data._links.next.href);
         setNext(data._links.next.href);
-        setNextRecipes(data.hits);
+        // console.log(next)
+        updateUrl()
     };
 
     const getNextRecipes = async () => {
@@ -62,9 +67,20 @@ const App =()=> {
         console.log(response);
         const data = await response.json();
         console.log(data.hits);
-        setNextRecipes(data.hits);
+        setRecipes(data.hits);
+        updateUrl()
+        // updateRecipes();
+        // console.log(data._links.next.href);
+        // setNext(data._links.next.href);
+        // console.log(next)
+        // getNextRecipes();
     };
+    const updateUrl = e =>{
+        setUrl(next);
+        console.log(url);
+        getRecipes();
 
+    };
     const updateSearch = e =>{
         setSearch(e.target.value);
     };
@@ -75,6 +91,7 @@ const App =()=> {
 
     const updateRecipes = e =>{
         setRecipes(nextRecipes);
+
     };
 
     const getSearch = e => {
@@ -115,7 +132,7 @@ const App =()=> {
                 <div className="grid">
                     {recipes.map(recipe =>(
                         <RecipeBox
-                        key = {recipe._links.self}
+                        key = {recipe.recipe.calories}
                         title ={recipe.recipe.label}
                         image ={recipe.recipe.image}
                         calories ={recipe.recipe.calories}
@@ -130,7 +147,7 @@ const App =()=> {
                 </div>
                 <div className="d-flex justify-content-between">
                     <Button className="prev-btn" variant="secondary"  onClick={getRecipes}type="submit" >Previous</Button>
-                    <Button className="next-btn" variant="secondary"  onClick={updateRecipes} type="submit">Next</Button>
+                    <Button className="next-btn" variant="secondary"  onClick={getNext} type="submit">Next</Button>
                 </div>
 
             </div>
