@@ -26,6 +26,7 @@ const App =()=> {
     const [search,setSearch] = useState('');
     const [query, setQuery] = useState("chicken")
     const [url,setUrl] = useState(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
+
     useEffect(() => {
         getRecipes()
     }, [query]);
@@ -39,7 +40,7 @@ const App =()=> {
     // }, []);
 
     const getRecipes = async () => {
-        const response = await fetch(url)
+        const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
         const data = await response.json();
         console.log(data)
         setRecipes(data.hits);
@@ -48,7 +49,7 @@ const App =()=> {
     };
 
     const getNext = async () => {
-        // console.log(next);
+        console.log(next);
         const response = await fetch(next)
         console.log(response);
         const data = await response.json();
@@ -56,10 +57,10 @@ const App =()=> {
         setRecipes(data.hits);
 
         // updateRecipes();
-        // console.log(data._links.next.href);
+        console.log(data._links.next.href);
         setNext(data._links.next.href);
         // console.log(next)
-        updateUrl()
+        // updateUrl()
     };
 
     const getNextRecipes = async () => {
@@ -97,6 +98,8 @@ const App =()=> {
     const getSearch = e => {
     e.preventDefault();
     setQuery(search);
+        console.log(search);
+
         setSearch('');
     };
 
