@@ -7,6 +7,7 @@ import RecipeBox from './RecipeBox';
 import React, {useEffect, useState} from 'react';
 import ReactLoading from "react-loading";
 import LoadingScreen from "./LoadingScreen";
+import axios from 'axios';
 
 const AppIcon = styled.img`
 display: flex;
@@ -17,7 +18,6 @@ width: 75px;
 `;
 
 const App =()=> {
-
     const APP_ID = "2d320d45";
     const APP_KEY = "07015b8fb7809a5ee4afdbe546b5d4b7";
     const [recipes, setRecipes] = useState ([]);
@@ -25,63 +25,58 @@ const App =()=> {
     const [nextRecipes, setNextRecipes] = useState ([]);
     const [search,setSearch] = useState('');
     const [query, setQuery] = useState("chicken")
-    const [url,setUrl] = useState(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
+    const [url, setUrl] = useState(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
 
     useEffect(() => {
         getRecipes()
     }, [query]);
 
     useEffect(() => {
-        getNext()
+        getRecipes();
     }, []);
-
     // useEffect(() => {
-    //     getNextRecipes()
+    //     getNextRecipes();
+    // }, []);
+    // useEffect(() => {
+    //     getNext();
     // }, []);
 
-    const getRecipes = async () => {
-        const response = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
-        const data = await response.json();
-        console.log(data)
-        setRecipes(data.hits);
-        setNext(data._links.next.href);
 
-    };
+        const getRecipes = async () => {
+            try {
+                // Make a first request
+                const result = await axios.get(url);
+                setRecipes(result.data.hits);
+                setNext(result.data._links.next.href);
+                const result2 = await axios.get(next);
+                setUrl(result2.data._links.next.href);
+                console.log(url);
+            } catch (e) {
+                // Handle error here
+            }
+        };
 
-    const getNext = async () => {
-        console.log(next);
-        const response = await fetch(next)
-        console.log(response);
-        const data = await response.json();
-        console.log(data.hits);
-        setRecipes(data.hits);
+    //     getRecipes();
+    // }, []);
 
-        // updateRecipes();
-        console.log(data._links.next.href);
-        setNext(data._links.next.href);
-        // console.log(next)
+    // const getNextRecipes = async () => {
+    //     const response = await fetch(next)
+    //     const data = await response.json();
+    //     console.log(data.hits);
+        // setRecipes(data.hits);
         // updateUrl()
-    };
-
-    const getNextRecipes = async () => {
-        const response = await fetch(next)
-        console.log(response);
-        const data = await response.json();
-        console.log(data.hits);
-        setRecipes(data.hits);
-        updateUrl()
         // updateRecipes();
         // console.log(data._links.next.href);
         // setNext(data._links.next.href);
         // console.log(next)
         // getNextRecipes();
-    };
-    const updateUrl = e =>{
-        setUrl(next);
-        console.log(url);
-        getRecipes();
-
-    };
+    // };
+    // const updateUrl = e =>{
+    //     setUrl(next);
+    //     console.log(url);
+    //     getRecipes();
+    //
+    // };
     const updateSearch = e =>{
         setSearch(e.target.value);
     };
@@ -91,7 +86,7 @@ const App =()=> {
     };
 
     const updateRecipes = e =>{
-        setRecipes(nextRecipes);
+        getRecipes();
 
     };
 
@@ -150,7 +145,7 @@ const App =()=> {
                 </div>
                 <div className="d-flex justify-content-between">
                     <Button className="prev-btn" variant="secondary"  onClick={getRecipes}type="submit" >Previous</Button>
-                    <Button className="next-btn" variant="secondary"  onClick={getNext} type="submit">Next</Button>
+                    <Button className="next-btn" variant="secondary"  onClick={getRecipes} type="submit">Next</Button>
                 </div>
 
             </div>
