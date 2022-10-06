@@ -17,13 +17,15 @@ height: 75px;
 width: 75px;
 `;
 
-const App =()=> {
-    const APP_ID = "2d320d45";
-    const APP_KEY = "07015b8fb7809a5ee4afdbe546b5d4b7";
-    const [recipes, setRecipes] = useState ([]);
-    const [next, setNext] = useState ([]);
-    const [nextRecipes, setNextRecipes] = useState ([]);
-    const [search,setSearch] = useState('');
+const App = () => {
+    const APP_ID = process.env.REACT_APP_API_ID;
+    const APP_KEY = process.env.REACT_APP_API_KEY;
+    const [recipes, setRecipes] = useState([]);
+    const [prevUrl, setPrevUrl] = useState([]);
+    const [nextUrl, setNextUrl] = useState([]);
+    const [nextRecipes, setNextRecipes] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [search, setSearch] = useState('');
     const [query, setQuery] = useState("chicken")
     const [url, setUrl] = useState(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
 
@@ -32,67 +34,61 @@ const App =()=> {
     }, [query]);
 
     useEffect(() => {
-        getRecipes();
+        getPrevUrl()
     }, []);
-    // useEffect(() => {
-    //     getNextRecipes();
-    // }, []);
-    // useEffect(() => {
-    //     getNext();
-    // }, []);
+    useEffect(() => {
+        getNextUrl()
+    }, []);
+    const getRecipes = async () => {
+        try {
+            const result = await axios.get(url);
+            console.log(result.config.url);
+            setPrevUrl(result.config.url);
+            setRecipes(result.data.hits);
+            console.log(result);
+            setNextUrl(result.data._links.next.href);
+        } catch (e) {
+            console.log("There has been an error!")
+        }
+    };
 
+    const getPrevUrl = async () => {
+        try {
+            const result = await axios.get(prevUrl);
+            setRecipes(result.data.hits);
+            console.log(recipes)
+            setNextUrl(result.data._links.next.href);
+        } catch (e) {
+            console.log("There has been an error!")
+        }
+    };
 
-        const getRecipes = async () => {
-            try {
-                // Make a first request
-                const result = await axios.get(url);
-                setRecipes(result.data.hits);
-                setNext(result.data._links.next.href);
-                const result2 = await axios.get(next);
-                setUrl(result2.data._links.next.href);
-                console.log(url);
-            } catch (e) {
-                // Handle error here
-            }
-        };
+    const getNextUrl = async () => {
+        try {
+            const result = await axios.get(nextUrl);
+            console.log(result.config.url);
 
-    //     getRecipes();
-    // }, []);
+            console.log(prevUrl)
+            setRecipes(result.data.hits);
+            setNextUrl(result.data._links.next.href);
+        } catch (e) {
+            console.log("There has been an error!")
+        }
+    };
 
-    // const getNextRecipes = async () => {
-    //     const response = await fetch(next)
-    //     const data = await response.json();
-    //     console.log(data.hits);
-        // setRecipes(data.hits);
-        // updateUrl()
-        // updateRecipes();
-        // console.log(data._links.next.href);
-        // setNext(data._links.next.href);
-        // console.log(next)
-        // getNextRecipes();
-    // };
-    // const updateUrl = e =>{
-    //     setUrl(next);
-    //     console.log(url);
-    //     getRecipes();
-    //
-    // };
-    const updateSearch = e =>{
+    const updateSearch = e => {
         setSearch(e.target.value);
     };
 
-    const updateNext = e =>{
-        setNext(e.target.value);
-    };
 
-    const updateRecipes = e =>{
+    const updateRecipes = e => {
         getRecipes();
 
     };
 
     const getSearch = e => {
-    e.preventDefault();
-    setQuery(search);
+        e.preventDefault();
+        setQuery(search);
         console.log(search);
 
         setSearch('');
@@ -111,11 +107,12 @@ const App =()=> {
                     <Navbar.Brand href="/home">Recipes for the Ages</Navbar.Brand>
                     <Navbar.Toggle className="navbar-toggle" aria-controls="navbarScroll"></Navbar.Toggle>
                     <Navbar.Collapse className="navbar-collapse" id="navbarScroll">
-                        <Nav className="me-auto my-2 my-lg-3" style={{maxHeight:'100px'}} navbarScroll>
+                        <Nav className="me-auto my-2 my-lg-3" style={{maxHeight: '100px'}} navbarScroll>
 
                         </Nav>
                         <Form onSubmit={getSearch} className="d-flex">
-                            <FormControl type="search" placeholder="Search Recipes" className="me-2" value={search} onChange={updateSearch} aria-label="search"></FormControl>
+                            <FormControl type="search" placeholder="Search Recipes" className="me-2" value={search}
+                                         onChange={updateSearch} aria-label="search"></FormControl>
                             <Button className="search-btn" variant="secondary" type="submit">
                                 <h5>Search</h5>
                             </Button>
@@ -124,39 +121,41 @@ const App =()=> {
 
                 </Container>
             </Navbar>
-            {recipes.length > 0 ?(
+            {recipes.length > 0 ? (
                 <section className="hero">
-            <div className= "container">
-                <div className="grid">
-                    {recipes.map(recipe =>(
-                        <RecipeBox
-                        key = {recipe.recipe.calories}
-                        title ={recipe.recipe.label}
-                        image ={recipe.recipe.image}
-                        calories ={recipe.recipe.calories}
-                        ingredients ={recipe.recipe.ingredients}
-                        link ={recipe.recipe.url}
-                        ingredients={recipe.recipe.ingredients}
-                        source={recipe.recipe.source}
-                        healthLabels={recipe.recipe.healthLabels}
-                        servings={recipe.recipe.yield}
-                        />
-                    ))}
-                </div>
-                <div className="d-flex justify-content-between">
-                    <Button className="prev-btn" variant="secondary"  onClick={getRecipes}type="submit" >Previous</Button>
-                    <Button className="next-btn" variant="secondary"  onClick={getRecipes} type="submit">Next</Button>
-                </div>
+                    <div className="container">
+                        <div className="grid">
+                            {recipes.map(recipe => (
+                                <RecipeBox
+                                    key={recipe.recipe.uri}
+                                    title={recipe.recipe.label}
+                                    image={recipe.recipe.image}
+                                    calories={recipe.recipe.calories}
+                                    ingredients={recipe.recipe.ingredients}
+                                    link={recipe.recipe.url}
+                                    ingredients={recipe.recipe.ingredients}
+                                    source={recipe.recipe.source}
+                                    healthLabels={recipe.recipe.healthLabels}
+                                    servings={recipe.recipe.yield}
+                                />
+                            ))}
+                        </div>
+                        <div className="d-flex justify-content-between">
+                            <Button className="prev-btn" variant="secondary" onClick={getPrevUrl}
+                                    type="submit">Previous</Button>
+                            <Button className="next-btn" variant="secondary" onClick={getNextUrl}
+                                    type="submit">Next</Button>
+                        </div>
 
-            </div>
+                    </div>
 
                 </section>
 
-            ):(
-                    <h2>Sorry !! No Recipes Found</h2>
-                )}
+            ) : (
+                <h2>Sorry !! No Recipes Found</h2>
+            )}
         </>
-  );
+    );
 }
 
 export default App;
