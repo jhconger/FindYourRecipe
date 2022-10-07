@@ -30,20 +30,21 @@ const App = () => {
     const [url, setUrl] = useState(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
 
     useEffect(() => {
-        getRecipes()
-    }, [query]);
-
-    useEffect(() => {
         getPrevUrl()
     }, []);
+
     useEffect(() => {
         getNextUrl()
     }, []);
+
+useEffect(() => {
+    getRecipes()
+}, [query]);
+
     const getRecipes = async () => {
         try {
             const result = await axios.get(url);
             console.log(result.config.url);
-            setPrevUrl(result.config.url);
             setRecipes(result.data.hits);
             console.log(result);
             setNextUrl(result.data._links.next.href);
@@ -52,11 +53,12 @@ const App = () => {
         }
     };
 
+
     const getPrevUrl = async () => {
         try {
             const result = await axios.get(prevUrl);
+            console.log(result);
             setRecipes(result.data.hits);
-            console.log(recipes)
             setNextUrl(result.data._links.next.href);
         } catch (e) {
             console.log("There has been an error!")
@@ -68,9 +70,12 @@ const App = () => {
             const result = await axios.get(nextUrl);
             console.log(result.config.url);
 
+            // setPrevUrl(result.config.url);
             console.log(prevUrl)
+            setUrl(nextUrl);
             setRecipes(result.data.hits);
-            setNextUrl(result.data._links.next.href);
+
+            // setNextUrl(result.data._links.next.href);
         } catch (e) {
             console.log("There has been an error!")
         }
@@ -80,6 +85,9 @@ const App = () => {
         setSearch(e.target.value);
     };
 
+    const updateUrl = e => {
+        setUrl(e.target.value);
+    };
 
     const updateRecipes = e => {
         getRecipes();
@@ -90,7 +98,6 @@ const App = () => {
         e.preventDefault();
         setQuery(search);
         console.log(search);
-
         setSearch('');
     };
 
