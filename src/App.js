@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Navbar, Container, Nav, Form, FormControl, Button} from 'react-bootstrap';
 import RecipeBox from './RecipeBox';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import ReactLoading from "react-loading";
 import LoadingScreen from "./LoadingScreen";
 import axios from 'axios';
@@ -29,84 +29,60 @@ const App = () => {
     const [query, setQuery] = useState("chicken")
     const [url, setUrl] = useState(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
 
-    useEffect(() => {
-        getPrevUrl()
-    }, []);
+    const [pagination, setPagination] = useState(0);
 
-    useEffect(() => {
-        getNextUrl()
-    }, []);
+    const prevSearchIdRef = useRef();
+    useEffect(()=>{
+      prevSearchIdRef.current = query;
+    });
+    const prevSearch = prevSearchIdRef.current
 
-useEffect(() => {
-    getRecipes()
-}, [query]);
+    let currentPagination = pagination;
 
-    const getRecipes = async () => {
-        try {
-            const result = await axios.get(url);
-            // setPrevUrl(result.config.url);
-            setRecipes(result.data.hits);
-            console.log(result);
-            setNextUrl(result.data._links.next.href);
-            // setPrevUrl(result.config.url);
-        } catch (e) {
-            console.log("There has been an error!")
-        }
-    };
+    const fetchRecipes = async () => {
 
-    const getNextUrl = async () => {
-        try {
-            const result = await axios.get(nextUrl);
-            console.log(result);
-            setUrl(result.data._links.next.href);
-            // console.log(prevUrl)
-            // setUrl(nextUrl);
-            setRecipes(result.data.hits);
-            setPrevUrl(result.config.url);
-            // console.log(prevUrl)
-            console.log(result.data.hits);
-            getRecipes();
-            // console.log(prevUrl)
-        } catch (e) {
-            console.log("There has been an error!")
-        }
-    };
+    if(prevSearch !== query){
+      currentPagination = 0;
+      setPagination(0);
+    }
 
-    const getPrevUrl = async () => {
-        try {
-            const result = await axios.get(prevUrl);
-            console.log(result);
-            setRecipes(result.data.hits);
-            // setNextUrl(result.data._links.next.href);
-        } catch (e) {
-            console.log("There has been an error!")
-        }
-    };
+
+
+    const response = await fetch(`https://api.edamam.com/search?q=${query}&app_id=8f7859bc&app_key=f7c43e28aea5bc242e86fe0f089dda3c&from${currentPagination}&to=${pagination + 20}`)
+    const data = await response.json();
+    setRecipes(data.hits);
+    }
 
     const updateSearch = e => {
-        setSearch(e.target.value);
-    };
+      setSearch(e.target.value);
+      };
 
-    const updateUrl = e => {
-        setUrl(e.target.value);
-    };
-
-    const updateRecipes = e => {
-        getRecipes();
-
-    };
 
     const getSearch = e => {
-        e.preventDefault();
-        setQuery(search);
-        console.log(search);
-        setSearch('');
-    };
+      e.preventDefault();
+      setQuery(search);
+      setSearch('');
+    }
 
-    const [loading, setLoading] = useState(true)
+    const prevClick = () => {
+      if(pagination === 0){
+        return;
+      }
+      setPagination(pagination-20);
+  }
+
+  const nextClick = () => {
+
+      setPagination(pagination+20);
+
+  }
+
+
+
     useEffect(() => {
-        setTimeout(() => setLoading(false), 6000)
-    }, []);
+      fetchRecipes();
+    }, [query, pagination])
+
 
     return (
         <>
@@ -150,9 +126,9 @@ useEffect(() => {
                             ))}
                         </div>
                         <div className="d-flex justify-content-between">
-                            <Button className="prev-btn" variant="secondary" onClick={getPrevUrl}
+                            <Button className="prev-btn" variant="secondary" onClick={prevClick}
                                     type="submit">Previous</Button>
-                            <Button className="next-btn" variant="secondary" onClick={getNextUrl}
+                            <Button className="next-btn" variant="secondary" onClick={nextClick}
                                     type="submit">Next</Button>
                         </div>
 
