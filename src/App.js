@@ -44,22 +44,11 @@ useEffect(() => {
     const getRecipes = async () => {
         try {
             const result = await axios.get(url);
-            console.log(result.config.url);
+            // setPrevUrl(result.config.url);
             setRecipes(result.data.hits);
             console.log(result);
             setNextUrl(result.data._links.next.href);
-        } catch (e) {
-            console.log("There has been an error!")
-        }
-    };
-
-
-    const getPrevUrl = async () => {
-        try {
-            const result = await axios.get(prevUrl);
-            console.log(result);
-            setRecipes(result.data.hits);
-            setNextUrl(result.data._links.next.href);
+            // setPrevUrl(result.config.url);
         } catch (e) {
             console.log("There has been an error!")
         }
@@ -68,13 +57,26 @@ useEffect(() => {
     const getNextUrl = async () => {
         try {
             const result = await axios.get(nextUrl);
-            console.log(result.config.url);
-
-            // setPrevUrl(result.config.url);
-            console.log(prevUrl)
-            setUrl(nextUrl);
+            console.log(result);
+            setUrl(result.data._links.next.href);
+            // console.log(prevUrl)
+            // setUrl(nextUrl);
             setRecipes(result.data.hits);
+            setPrevUrl(result.config.url);
+            // console.log(prevUrl)
+            console.log(result.data.hits);
+            getRecipes();
+            // console.log(prevUrl)
+        } catch (e) {
+            console.log("There has been an error!")
+        }
+    };
 
+    const getPrevUrl = async () => {
+        try {
+            const result = await axios.get(prevUrl);
+            console.log(result);
+            setRecipes(result.data.hits);
             // setNextUrl(result.data._links.next.href);
         } catch (e) {
             console.log("There has been an error!")
