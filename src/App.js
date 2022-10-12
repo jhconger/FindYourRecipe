@@ -28,29 +28,30 @@ const App = () => {
     const [search, setSearch] = useState('');
     const [query, setQuery] = useState("chicken")
     const [url, setUrl] = useState(`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`)
-
     const [pagination, setPagination] = useState(0);
-
+    const [currentPagination, setCurrentPagination] = useState(0);
+    const rows = 20
+    const paginatedRecipes = recipes.slice(pagination, rows)
+    const [page, setPage] = useState(1);
     const prevSearchIdRef = useRef();
+
     useEffect(()=>{
       prevSearchIdRef.current = query;
     });
     const prevSearch = prevSearchIdRef.current
-
-    let currentPagination = pagination;
-
     const fetchRecipes = async () => {
-
     if(prevSearch !== query){
-      currentPagination = 0;
-      setPagination(0);
+
     }
 
 
 
-    const response = await fetch(`https://api.edamam.com/search?q=${query}&app_id=8f7859bc&app_key=f7c43e28aea5bc242e86fe0f089dda3c&from${currentPagination}&to=${pagination + 20}`)
+    const response = await fetch(`https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}&from=${currentPagination}&to=${pagination + 20}`)
     const data = await response.json();
+        console.log(response);
     setRecipes(data.hits);
+    // setCurrentPagination(currentPagination+1);
+        console.log(currentPagination);
     }
 
     const updateSearch = e => {
@@ -62,6 +63,7 @@ const App = () => {
       e.preventDefault();
       setQuery(search);
       setSearch('');
+        setCurrentPagination(+1);
     }
 
     const prevClick = () => {
@@ -69,11 +71,16 @@ const App = () => {
         return;
       }
       setPagination(pagination-20);
-  }
+        setCurrentPagination(currentPagination-20);
+        console.log(pagination)
+    }
 
   const nextClick = () => {
-
       setPagination(pagination+20);
+      setCurrentPage(+1);
+      setCurrentPagination(currentPagination+20);
+      console.log(pagination);
+      // setCurrentPagination(currentPagination-20)
 
   }
 
@@ -81,7 +88,7 @@ const App = () => {
 
     useEffect(() => {
       fetchRecipes();
-    }, [query, pagination])
+    }, [query, currentPagination, pagination])
 
 
     return (
